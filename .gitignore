@@ -1,0 +1,6 @@
+.idea
+.env
+.postgres_data
+.DS_Store
+.README.md
+/postgres_data

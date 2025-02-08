@@ -1,0 +1,32 @@
+server:
+  host: "localhost"             # Адрес сервера
+  port: 8080                    # Порт сервера
+  read_timeout: 5s              # Таймаут чтения запроса
+  write_timeout: 10s            # Таймаут записи ответа
+  max_header_bytes: 1048576     # Максимальный размер заголовков (1 MB)
+
+logging:
+  level: "debug"                # Уровень логирования: debug, info, warn, error
+  format: "json"                # Формат логов: text, json
+  output_file: ""               # Файл для записи логов (пусто для вывода в консоль)
+
+database:
+  host: "localhost"             # Адрес базы данных
+  port: 5432                    # Порт базы данных
+  user: "postgres"              # Пользователь базы данных
+  password: "postgres"          # Пароль пользователя базы данных
+  dbname: "auth-service"        # Имя базы данных
+  sslmode: "disable"            # Режим SSL для соединения с базой данных
+
+redis:
+  addr: "localhost:6379"
+  password: "your_secure_password"
+  db: 0
+
+auth:
+  signing_key: "super_secret_key"
+  access_token_ttl: 20s  #24h
+  refresh_token_ttl: 40s  #720h
+
+
+# Приоритет подгрузки переменных - .env!
