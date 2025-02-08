@@ -10,7 +10,7 @@ import (
 )
 
 type AuthService interface {
-	CreateUser(ctx context.Context, user models.User) (int, error)
+	CreateUser(ctx context.Context, user models.UserInput) (int, error)
 	GenerateTokens(ctx context.Context, username, password string) (models.Tokens, error)
 	RefreshTokens(ctx context.Context, oldRefreshToken string) (models.Tokens, error)
 	RevokeToken(ctx context.Context, token string) error

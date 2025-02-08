@@ -4,6 +4,7 @@ CREATE TABLE users
     username varchar(255) not null unique,
     password_hash varchar(255) not null,
     email varchar(255) not null unique,
+    role varchar(255) not null default 'user',
     created_at timestamp default current_timestamp,
     updated_at timestamp default current_timestamp
 );

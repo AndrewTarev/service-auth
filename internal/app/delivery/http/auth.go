@@ -31,13 +31,13 @@ func NewAuth(services service.Service, cfg *configs.Config) *Auth {
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param input body models.User true "User details"
-// @Success 201 {object} models.UserIdResponse "User ID"
+// @Param input body models.UserInput true "UserInput details"
+// @Success 201 {object} models.UserIdResponse "UserInput ID"
 // @Failure 400 {object} middleware.ValidationErrorResponse "Invalid input format or validation errors"
 // @Failure 500 {object} middleware.ValidationErrorResponse "Internal server error"
 // @Router /auth/register [post]
 func (h *Auth) Register(ctx *gin.Context) {
-	var input models.User
+	var input models.UserInput
 
 	if err := ctx.ShouldBindJSON(&input); err != nil {
 		ctx.Error(err)
@@ -64,7 +64,7 @@ func (h *Auth) Register(ctx *gin.Context) {
 }
 
 // Login godoc
-// @Summary User login
+// @Summary UserInput login
 // @Description Logs in a user and returns access and refresh tokens
 // @Tags auth
 // @Accept json

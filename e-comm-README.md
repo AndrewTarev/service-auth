@@ -5,7 +5,7 @@
 1. Auth Service:
    - Аутентификация и авторизация.
    - Выдача JWT токенов.
-2. User Service:
+2. UserInput Service:
    - Управление профилями пользователей.
    - CRUD для пользователей.
 3. Product Service:

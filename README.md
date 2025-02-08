@@ -9,58 +9,53 @@
 2. Логин:
    - Проверка логина и пароля.
    - Генерация JWT токенов (access и refresh).
+   - Запись токенов в куки.
+   - Запись refresh в redis.
 
-3. Обновление токена (refresh):
+3. Обновление токенов (access, refresh):
    - Проверка валидности refresh токена.
+   - Проверка наличия refresh токена в redis.
    - Выдача нового access токена.
+   - Обновление refresh в redis
 
-4. Валидация токена:
-   - Проверка переданных токенов на валидность.
+4. Отзыв refresh токена:
+   - Удаление refresh токена из redis
 
 ## Структура проекта
+
 ```
 service-auth
-├── Dockerfile
-├── Makefile
-├── README.md
-├── authREADME.md
 ├── cmd
-│   └── main.go
-├── docker-compose.yml
-├── go.mod
-├── go.sum
-└── internal
-    ├── app
-    │   ├── delivery                      # Контроллеры HTTP (handler)
-    │   │   └── http
-    │   │       ├── auth.go
-    │   │       ├── handler.go
-    │   │       └── response.go
-    │   ├── domain                        # Сущности
-    │   │   ├── token_payload.go
-    │   │   └── user.go
-    │   ├── repository                    # Слой работы с БД
-    │   │   ├── auth_postgres.go
-    │   │   ├── auth_redis.go
-    │   │   └── repository.go
-    │   └── service                       # Бизнес логика
-    │       ├── auth_service.go
-    │       └── service.go
-    ├── configs
-    │   ├── config.go
-    │   └── config.yaml
-    ├── ifrastructure                        
-    │   ├── auth_helper
-    │   │   └── jwt_manager.go
-    │   ├── db                            # Настройки подключения к Postgres
-    │   │   ├── db.go
-    │   │   └── migrations
-    │   │       ├── 000001_init.down.sql
-    │   │       └── 000001_init.up.sql
-    │   ├── logging                       # Конфиг логгера
-    │   │   └── logger.go
-    │   └── redis_client                  # Настройки подключения к Redis
-    │       └── redis_connection.go
-    └── server                                  # Настройки сервера
-        └── server.go
+├── docs                            # Swagger документация
+├── internal
+│   ├── app
+│   │   ├── delivery                # Слой хэндлеров
+│   │   │   ├── http
+│   │   │   └── middleware          # Обработка ошибок тут
+│   │   ├── errs
+│   │   ├── models                  # Сущности
+│   │   ├── repository              # Слой работы с БД
+│   │   │   └── migrations
+│   │   ├── service                 # Слой сервисов
+│   │   │   └── mocks
+│   │   └── utils             
+│   ├── configs
+│   └── server
+├── pkg                             # Настройки БД, логгера, редиса
+│   ├── db
+│   ├── logger
+│   └── redis_client
+└── test                            # Тесты
 ```
+
+## Установка приложения:
+
+1. Склонируйте репозиторий себе на компьютер
+   - git clone https://github.com/AndrewTarev/service-auth.git
+
+2. Установите свои переменные в .env файл
+
+3. Запустите сборку контейнеров
+   - docker-compose up --build
+
+API документация (Swagger/OpenAPI) доступна по пути http://localhost:8080/swagger/index.html

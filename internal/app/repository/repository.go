@@ -11,8 +11,8 @@ import (
 )
 
 type PostgresRepository interface {
-	CreateUser(ctx context.Context, user models.User) (int, error)
-	GetUser(ctx context.Context, username string) (models.User, error)
+	CreateUser(ctx context.Context, user models.UserInput) (int, error)
+	GetUser(ctx context.Context, username string) (models.GetUserResponse, error)
 }
 
 type RedisRepository interface {

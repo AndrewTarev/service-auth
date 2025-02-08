@@ -42,13 +42,14 @@ func CheckPasswordHash(password, hash string) error {
 }
 
 // GenerateAccessToken создает токен доступа с информацией о пользователе
-func (j *JWTManager) GenerateAccessToken(username string, id int, accessTTL time.Duration) (string, error) {
+func (j *JWTManager) GenerateAccessToken(username, role string, id int, accessTTL time.Duration) (string, error) {
 	logger.Debug("Generating access token for user: ", username)
 
 	claims := jwt.MapClaims{
 		"token_type": AccessToken,
 		"sub":        id,
 		"username":   username,
+		"role":       role,
 		"exp":        time.Now().Add(accessTTL).Unix(),
 		"iat":        time.Now().Unix(),
 	}
@@ -58,13 +59,14 @@ func (j *JWTManager) GenerateAccessToken(username string, id int, accessTTL time
 }
 
 // GenerateRefreshToken создает токен обновления
-func (j *JWTManager) GenerateRefreshToken(username string, id int, refreshTTL time.Duration) (string, error) {
+func (j *JWTManager) GenerateRefreshToken(username, role string, id int, refreshTTL time.Duration) (string, error) {
 	logger.Debug("Generating refresh token")
 
 	claims := jwt.MapClaims{
 		"token_type": RefreshToken,
 		"sub":        id,
 		"username":   username,
+		"role":       role,
 		"exp":        time.Now().Add(refreshTTL).Unix(),
 		"iat":        time.Now().Unix(),
 	}
@@ -97,42 +99,4 @@ func (j *JWTManager) DecodeJWT(tokenString string) (jwt.Claims, error) {
 		return claims, nil
 	}
 	return nil, errs.ErrTokenInvalid
-}
-
-// RefreshTokens обновляет токены доступа и обновления
-func (j *JWTManager) RefreshTokens(refreshToken string, accessTTL, refreshTTL time.Duration) (string, string, error) {
-	logger.Debug("Refreshing tokens")
-
-	claims, err := j.DecodeJWT(refreshToken)
-	if err != nil {
-		return "", "", fmt.Errorf("invalid refresh token: %w", err)
-	}
-
-	tokenType, ok := claims.(jwt.MapClaims)["token_type"].(string)
-	if !ok || tokenType != RefreshToken {
-		return "", "", errs.ErrInvalidTokenType
-	}
-
-	username, ok := claims.(jwt.MapClaims)["username"].(string)
-	if !ok {
-		return "", "", errs.ErrMissingUsername
-	}
-
-	id, ok := claims.(jwt.MapClaims)["sub"].(float64)
-	if !ok {
-		return "", "", errs.ErrMissingUserID
-	}
-
-	newAccessToken, err := j.GenerateAccessToken(username, int(id), accessTTL)
-	if err != nil {
-		return "", "", fmt.Errorf("error generating access token: %w", err)
-	}
-
-	newRefreshToken, err := j.GenerateRefreshToken(username, int(id), refreshTTL)
-	if err != nil {
-		return "", "", fmt.Errorf("error generating refresh token: %w", err)
-	}
-
-	logger.Debug("Access tokens refreshed successfully for user: ", username)
-	return newAccessToken, newRefreshToken, nil
 }

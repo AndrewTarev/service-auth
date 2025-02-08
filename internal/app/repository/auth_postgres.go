@@ -24,7 +24,7 @@ func NewPostgresRepo(db *pgxpool.Pool) *PostgresRepo {
 	return &PostgresRepo{db: db}
 }
 
-func (r *PostgresRepo) CreateUser(ctx context.Context, user models.User) (int, error) {
+func (r *PostgresRepo) CreateUser(ctx context.Context, user models.UserInput) (int, error) {
 	query := "INSERT INTO users(username, password_hash, email) VALUES ($1, $2, $3) RETURNING id"
 	var id int
 	err := r.db.QueryRow(ctx, query, user.Username, user.Password, user.Email).Scan(&id)
@@ -47,11 +47,11 @@ func (r *PostgresRepo) CreateUser(ctx context.Context, user models.User) (int, e
 	return id, nil
 }
 
-func (r *PostgresRepo) GetUser(ctx context.Context, username string) (models.User, error) {
-	var user models.User
-	query := "SELECT id, username, password_hash, email FROM users WHERE username = $1"
+func (r *PostgresRepo) GetUser(ctx context.Context, username string) (models.GetUserResponse, error) {
+	var user models.GetUserResponse
+	query := "SELECT * FROM users WHERE username = $1"
 	row := r.db.QueryRow(ctx, query, username)
-	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.Email)
+	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.Email, &user.Role, &user.CreateAt, &user.UpdateAt)
 	if err != nil {
 		if err.Error() == "no rows in result set" {
 			return user, errs.ErrUserNotFound

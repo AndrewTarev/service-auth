@@ -8,7 +8,7 @@ migratedown:
 	migrate -path ./internal/app/repository/migrations -database 'postgres://postgres:postgres@localhost:5432/auth-service?sslmode=disable' down
 
 test-mock:
-	mockgen -source=internal/service/service.go -destination=internal/service/mocks/mock_user_service.go -package=mocks
+	mockgen -source=internal/app/service/service.go -destination=internal/app/service/mocks/mock_service.go -package=mocks
 
 gen-docs:
 	swag init -g ./cmd/main.go -o ./docs
