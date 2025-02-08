@@ -1,6 +1,4 @@
 .idea
-.env
-.postgres_data
-.DS_Store
-.README.md
+.e-comm-README.md
 /postgres_data
+/test_postgres_data
