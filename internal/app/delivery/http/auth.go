@@ -9,7 +9,21 @@ import (
 
 	"service-auth/internal/app/errs"
 	"service-auth/internal/app/models"
+	"service-auth/internal/app/service"
+	"service-auth/internal/configs"
 )
+
+type Auth struct {
+	services service.Service
+	cfg      *configs.Config
+}
+
+func NewAuth(services service.Service, cfg *configs.Config) *Auth {
+	return &Auth{
+		services: services,
+		cfg:      cfg,
+	}
+}
 
 // Register godoc
 // @Summary Register a new user
@@ -21,8 +35,8 @@ import (
 // @Success 201 {object} models.UserIdResponse "User ID"
 // @Failure 400 {object} middleware.ValidationErrorResponse "Invalid input format or validation errors"
 // @Failure 500 {object} middleware.ValidationErrorResponse "Internal server error"
-// @Router /register [post]
-func (h *Handler) Register(ctx *gin.Context) {
+// @Router /auth/register [post]
+func (h *Auth) Register(ctx *gin.Context) {
 	var input models.User
 
 	if err := ctx.ShouldBindJSON(&input); err != nil {
@@ -59,8 +73,8 @@ func (h *Handler) Register(ctx *gin.Context) {
 // @Success 200 {object} models.Tokens "Access and refresh tokens"
 // @Failure 400 {object} middleware.ValidationErrorResponse "Invalid input format"
 // @Failure 403 {object} middleware.ValidationErrorResponse "invalid username or password"
-// @Router /login [post]
-func (h *Handler) Login(ctx *gin.Context) {
+// @Router /auth/login [post]
+func (h *Auth) Login(ctx *gin.Context) {
 	var input models.SignInInput
 	var tokens models.Tokens
 
@@ -91,8 +105,8 @@ func (h *Handler) Login(ctx *gin.Context) {
 // @Success 200 {object} models.Tokens "New access and refresh tokens"
 // @Failure 400 {object} middleware.ValidationErrorResponse "Invalid input format"
 // @Failure 401 {object} middleware.ValidationErrorResponse "Unauthorized or invalid refresh token"
-// @Router /refresh [post]
-func (h *Handler) Refresh(ctx *gin.Context) {
+// @Router /auth/refresh [post]
+func (h *Auth) Refresh(ctx *gin.Context) {
 	var tokens models.Tokens
 	var input models.InputRefresh
 
@@ -124,8 +138,8 @@ func (h *Handler) Refresh(ctx *gin.Context) {
 // @Success 200 {object} SuccessResponse "Token revoked successfully"
 // @Failure 400 {object} middleware.ValidationErrorResponse "Invalid input format"
 // @Failure 500 {object} middleware.ValidationErrorResponse "Internal server error"
-// @Router /revoke-token [delete]
-func (h *Handler) Revoke(ctx *gin.Context) {
+// @Router /auth/revoke-token [delete]
+func (h *Auth) Revoke(ctx *gin.Context) {
 	token := ctx.Query("refresh_token")
 	if token == "" {
 		ctx.Error(errs.ErrRefreshTokenRequired)

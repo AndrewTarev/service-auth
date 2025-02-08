@@ -1,9 +1,8 @@
-package auth_helper
+package utils
 
 import (
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -90,7 +89,7 @@ func (j *JWTManager) DecodeJWT(tokenString string) (jwt.Claims, error) {
 			logger.Debugf("Error: token is expired: %v", err)
 			return nil, errs.ErrTokenExpired
 		}
-		log.Printf("Error parsing token: %v", err)
+		logger.Debugf("Error parsing token: %v", err)
 		return nil, errs.ErrTokenInvalid
 	}
 

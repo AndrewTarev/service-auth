@@ -9,12 +9,24 @@ import (
 
 	"service-auth/internal/app/errs"
 	"service-auth/internal/app/models"
-	"service-auth/internal/infrastructure/auth_helper"
+	"service-auth/internal/app/repository"
+	"service-auth/internal/app/utils"
+	"service-auth/internal/configs"
 )
 
-func (s *AuthService) CreateUser(ctx context.Context, user models.User) (int, error) {
+type Auth struct {
+	repo       *repository.Repository
+	jwtManager *utils.JWTManager
+	cfg        *configs.Config
+}
+
+func NewAuth(repo *repository.Repository, jwtManager *utils.JWTManager, cfg *configs.Config) *Auth {
+	return &Auth{repo: repo, jwtManager: jwtManager, cfg: cfg}
+}
+
+func (s *Auth) CreateUser(ctx context.Context, user models.User) (int, error) {
 	// Хэшируем пароль пользователя
-	hashedPassword, err := auth_helper.HashPassword(user.Password)
+	hashedPassword, err := utils.HashPassword(user.Password)
 	if err != nil {
 		logger.Errorf(err.Error())
 		return 0, err
@@ -30,13 +42,13 @@ func (s *AuthService) CreateUser(ctx context.Context, user models.User) (int, er
 }
 
 // GenerateTokens создает токены access, refresh, сохраняет refresh в redis
-func (s *AuthService) GenerateTokens(ctx context.Context, username, password string) (models.Tokens, error) {
+func (s *Auth) GenerateTokens(ctx context.Context, username, password string) (models.Tokens, error) {
 	user, err := s.repo.GetUser(ctx, username)
 	if err != nil {
 		return models.Tokens{}, err
 	}
 
-	checkPwd := auth_helper.CheckPasswordHash(password, user.Password)
+	checkPwd := utils.CheckPasswordHash(password, user.Password)
 	if checkPwd != nil {
 		return models.Tokens{}, errs.ErrInvalidPwd
 	}
@@ -64,7 +76,7 @@ func (s *AuthService) GenerateTokens(ctx context.Context, username, password str
 }
 
 // RefreshTokens обновляет access и refresh токен доступа
-func (s *AuthService) RefreshTokens(ctx context.Context, oldRefreshToken string) (models.Tokens, error) {
+func (s *Auth) RefreshTokens(ctx context.Context, oldRefreshToken string) (models.Tokens, error) {
 	claims, err := s.ValidateRefreshToken(oldRefreshToken)
 	if err != nil {
 		return models.Tokens{}, err
@@ -100,14 +112,14 @@ func (s *AuthService) RefreshTokens(ctx context.Context, oldRefreshToken string)
 	}, nil
 }
 
-func (s *AuthService) ValidateRefreshToken(token string) (jwt.Claims, error) {
+func (s *Auth) ValidateRefreshToken(token string) (jwt.Claims, error) {
 	claims, err := s.jwtManager.DecodeJWT(token)
 	if err != nil {
-		return nil, err
+		return nil, errs.ErrTokenInvalid
 	}
 
 	tokenType, ok := claims.(jwt.MapClaims)["token_type"].(string)
-	if !ok || tokenType != auth_helper.RefreshToken {
+	if !ok || tokenType != utils.RefreshToken {
 		return nil, errs.ErrInvalidTokenType
 	}
 
@@ -127,6 +139,6 @@ func (s *AuthService) ValidateRefreshToken(token string) (jwt.Claims, error) {
 }
 
 // RevokeToken удаляет refresh токен из redis
-func (s *AuthService) RevokeToken(ctx context.Context, token string) error {
+func (s *Auth) RevokeToken(ctx context.Context, token string) error {
 	return s.repo.DeleteToken(ctx, token)
 }

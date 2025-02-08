@@ -1,4 +1,4 @@
-basePath: /auth
+basePath: /api/v1
 definitions:
   http.SuccessResponse:
     properties:
@@ -73,7 +73,7 @@ info:
   title: Auth
   version: "1.0"
 paths:
-  /login:
+  /auth/login:
     post:
       consumes:
       - application/json
@@ -103,7 +103,7 @@ paths:
       summary: User login
       tags:
       - auth
-  /refresh:
+  /auth/refresh:
     post:
       consumes:
       - application/json
@@ -133,7 +133,7 @@ paths:
       summary: Refresh access token
       tags:
       - auth
-  /register:
+  /auth/register:
     post:
       consumes:
       - application/json
@@ -163,7 +163,7 @@ paths:
       summary: Register a new user
       tags:
       - auth
-  /revoke-token:
+  /auth/revoke-token:
     delete:
       consumes:
       - application/json

@@ -37,6 +37,9 @@ func ErrorHandler() gin.HandlerFunc {
 			case errors.Is(err, errs.ErrUserAlreadyExists):
 				statusCode = http.StatusBadRequest
 				message = "user already exists"
+			case errors.Is(err, errs.ErrUserNotFound):
+				statusCode = http.StatusNotFound
+				message = "user not found"
 			case errors.Is(err, errs.ErrEmailAlreadyUsed):
 				statusCode = http.StatusBadRequest
 				message = "email already used"
@@ -67,6 +70,12 @@ func ErrorHandler() gin.HandlerFunc {
 			case errors.Is(err, errs.ErrTokenNotFound):
 				statusCode = http.StatusBadRequest
 				message = "token not found"
+			case errors.Is(err, errs.ErrFailedToSave):
+				statusCode = http.StatusBadRequest
+				message = "try again later"
+			case errors.Is(err, errs.ErrFailedToRefresh):
+				statusCode = http.StatusBadRequest
+				message = "try again later"
 			case errors.As(err, &validationErrs): // Проверяем, является ли err ошибкой валидации
 				statusCode = http.StatusBadRequest
 				message = "Validation error"
@@ -82,7 +91,7 @@ func ErrorHandler() gin.HandlerFunc {
 
 			// Логируем критические ошибки
 			if statusCode == http.StatusInternalServerError {
-				logger.WithError(err).Errorf("Unhandled server error: %v", err)
+				logger.Errorf("Unhandled server error: %v", err)
 			}
 
 			// Формируем JSON-ответ

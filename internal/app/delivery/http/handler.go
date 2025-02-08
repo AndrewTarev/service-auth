@@ -13,15 +13,20 @@ import (
 	docs "service-auth/docs"
 )
 
+type AuthHandler interface {
+	Register(ctx *gin.Context)
+	Login(ctx *gin.Context)
+	Refresh(ctx *gin.Context)
+	Revoke(ctx *gin.Context)
+}
+
 type Handler struct {
-	services service.Service
-	cfg      *configs.Config
+	AuthHandler
 }
 
 func NewHandler(services service.Service, cfg *configs.Config) *Handler {
 	return &Handler{
-		services: services,
-		cfg:      cfg,
+		AuthHandler: NewAuth(services, cfg),
 	}
 }
 
@@ -29,15 +34,19 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 	router.Use(middleware.ErrorHandler())
 
-	docs.SwaggerInfo.BasePath = "/auth"
+	docs.SwaggerInfo.BasePath = "/api/v1"
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	auth := router.Group("/auth")
+	apiV1 := router.Group("/api/v1")
 	{
-		auth.POST("/register", h.Register)
-		auth.POST("/login", h.Login)
-		auth.POST("/refresh", h.Refresh)
-		auth.DELETE("/revoke-token", h.Revoke)
+		auth := apiV1.Group("/auth")
+		{
+			auth.POST("/register", h.Register)
+			auth.POST("/login", h.Login)
+			auth.POST("/refresh", h.Refresh)
+			auth.DELETE("/revoke-token", h.Revoke)
+		}
 	}
+
 	return router
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 
 	"service-auth/internal/app/errs"
 	"service-auth/internal/app/models"
@@ -15,7 +16,15 @@ const (
 	DuplicateValue = "23505"
 )
 
-func (r *Repository) CreateUser(ctx context.Context, user models.User) (int, error) {
+type PostgresRepo struct {
+	db *pgxpool.Pool
+}
+
+func NewPostgresRepo(db *pgxpool.Pool) *PostgresRepo {
+	return &PostgresRepo{db: db}
+}
+
+func (r *PostgresRepo) CreateUser(ctx context.Context, user models.User) (int, error) {
 	query := "INSERT INTO users(username, password_hash, email) VALUES ($1, $2, $3) RETURNING id"
 	var id int
 	err := r.db.QueryRow(ctx, query, user.Username, user.Password, user.Email).Scan(&id)
@@ -38,7 +47,7 @@ func (r *Repository) CreateUser(ctx context.Context, user models.User) (int, err
 	return id, nil
 }
 
-func (r *Repository) GetUser(ctx context.Context, username string) (models.User, error) {
+func (r *PostgresRepo) GetUser(ctx context.Context, username string) (models.User, error) {
 	var user models.User
 	query := "SELECT id, username, password_hash, email FROM users WHERE username = $1"
 	row := r.db.QueryRow(ctx, query, username)

@@ -7,9 +7,9 @@
         "version": "1.0"
     },
     "host": "localhost:8080",
-    "basePath": "/auth",
+    "basePath": "/api/v1",
     "paths": {
-        "/login": {
+        "/auth/login": {
             "post": {
                 "description": "Logs in a user and returns access and refresh tokens",
                 "consumes": [
@@ -55,7 +55,7 @@
                 }
             }
         },
-        "/refresh": {
+        "/auth/refresh": {
             "post": {
                 "description": "Refreshes the access token using a valid refresh token",
                 "consumes": [
@@ -101,7 +101,7 @@
                 }
             }
         },
-        "/register": {
+        "/auth/register": {
             "post": {
                 "description": "Creates a new user account",
                 "consumes": [
@@ -147,7 +147,7 @@
                 }
             }
         },
-        "/revoke-token": {
+        "/auth/revoke-token": {
             "delete": {
                 "description": "Revokes the specified refresh token",
                 "consumes": [

@@ -11,12 +11,8 @@ logging:
   output_file: ""               # Файл для записи логов (пусто для вывода в консоль)
 
 database:
-  host: "localhost"             # Адрес базы данных
-  port: 5432                    # Порт базы данных
-  user: "postgres"              # Пользователь базы данных
-  password: "postgres"          # Пароль пользователя базы данных
-  dbname: "auth-service"        # Имя базы данных
-  sslmode: "disable"            # Режим SSL для соединения с базой данных
+  dsn: postgres://postgres:postgres@localhost:5432/auth-service?sslmode=disable
+  migrate_path: file:///app/internal/app/repository/migrations
 
 redis:
   addr: "localhost:6379"

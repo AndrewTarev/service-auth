@@ -2,25 +2,18 @@ package db
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"time"
 
+	"github.com/golang-migrate/migrate/v4"
 	"github.com/jackc/pgx/v5/pgxpool"
 	logger "github.com/sirupsen/logrus"
 
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-
-	"service-auth/internal/configs"
 )
 
-func ConnectPostgres(cfg *configs.PostgresConfig) (*pgxpool.Pool, error) {
-	// Формируем строку подключения
-	dsn := fmt.Sprintf(
-		"postgres://%s:%s@%s:%d/%s?sslmode=%s",
-		cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DBName, cfg.SSLMode,
-	)
-
+func ConnectPostgres(dsn string) (*pgxpool.Pool, error) {
 	// Настраиваем контекст для подключения
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -49,6 +42,22 @@ func ConnectPostgres(cfg *configs.PostgresConfig) (*pgxpool.Pool, error) {
 		return nil, err
 	}
 
-	logger.Debugf("Successfully connected to PostgreSQL at %s:%d", cfg.Host, cfg.Port)
+	logger.Debug("Successfully connected to PostgreSQL")
 	return pool, nil
+}
+
+func ApplyMigrations(dsn string, migratePath string) {
+	m, err := migrate.New(
+		migratePath,
+		dsn,
+	)
+	if err != nil {
+		logger.Fatalf("Could not initialize migrate: %v", err)
+	}
+
+	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
+		logger.Fatalf("Could not apply migrations: %v", err)
+	}
+
+	logger.Debug("Migrations applied successfully!")
 }

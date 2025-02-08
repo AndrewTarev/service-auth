@@ -2,6 +2,12 @@ package models
 
 import "github.com/go-playground/validator/v10"
 
+var validate *validator.Validate
+
+func init() {
+	validate = validator.New()
+}
+
 type User struct {
 	ID       int64  `json:"-"`
 	Username string `json:"username" validate:"required,min=5,max=20"`
@@ -11,12 +17,6 @@ type User struct {
 
 func (u *User) Validate() error {
 	return validate.Struct(u)
-}
-
-var validate *validator.Validate
-
-func init() {
-	validate = validator.New()
 }
 
 type UserIdResponse struct {

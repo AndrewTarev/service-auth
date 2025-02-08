@@ -14,7 +14,15 @@ import (
 
 const ActiveToken = 1
 
-func (r *Repository) SaveToken(ctx context.Context, token string, ttl time.Duration) error {
+type RedisRepo struct {
+	redisConn *redis.Client
+}
+
+func NewRedisRepo(redisConn *redis.Client) *RedisRepo {
+	return &RedisRepo{redisConn: redisConn}
+}
+
+func (r *RedisRepo) SaveToken(ctx context.Context, token string, ttl time.Duration) error {
 	err := r.redisConn.Set(ctx, token, ActiveToken, ttl).Err()
 	if err != nil {
 		logger.Errorf("save token error: %v", err)
@@ -24,7 +32,7 @@ func (r *Repository) SaveToken(ctx context.Context, token string, ttl time.Durat
 	return nil
 }
 
-func (r *Repository) FindTokenInRedis(ctx context.Context, token string) error {
+func (r *RedisRepo) FindTokenInRedis(ctx context.Context, token string) error {
 	logger.Debugf("Checking token %s", token)
 	_, err := r.redisConn.Get(ctx, token).Int()
 	if errors.Is(err, redis.Nil) {
@@ -37,7 +45,7 @@ func (r *Repository) FindTokenInRedis(ctx context.Context, token string) error {
 	return nil
 }
 
-func (r *Repository) DeleteToken(ctx context.Context, token string) error {
+func (r *RedisRepo) DeleteToken(ctx context.Context, token string) error {
 	deleted, err := r.redisConn.Del(ctx, token).Result()
 	if err != nil {
 		logger.Errorf("Failed to delete token from Redis (token: %s): %v", token, err)
@@ -53,7 +61,7 @@ func (r *Repository) DeleteToken(ctx context.Context, token string) error {
 	return nil
 }
 
-func (r *Repository) UpdateRefreshTokenInRedis(ctx context.Context, oldToken, newToken string, ttl time.Duration) error {
+func (r *RedisRepo) UpdateRefreshTokenInRedis(ctx context.Context, oldToken, newToken string, ttl time.Duration) error {
 	// Начало транзакции
 	pipe := r.redisConn.TxPipeline()
 

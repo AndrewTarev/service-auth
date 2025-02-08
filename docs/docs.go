@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/login": {
+        "/auth/login": {
             "post": {
                 "description": "Logs in a user and returns access and refresh tokens",
                 "consumes": [
@@ -61,7 +61,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/refresh": {
+        "/auth/refresh": {
             "post": {
                 "description": "Refreshes the access token using a valid refresh token",
                 "consumes": [
@@ -107,7 +107,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/register": {
+        "/auth/register": {
             "post": {
                 "description": "Creates a new user account",
                 "consumes": [
@@ -153,7 +153,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/revoke-token": {
+        "/auth/revoke-token": {
             "delete": {
                 "description": "Revokes the specified refresh token",
                 "consumes": [
@@ -305,7 +305,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8080",
-	BasePath:         "/auth",
+	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Auth",
 	Description:      "API для авторизации и аутентификации.",

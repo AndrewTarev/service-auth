@@ -28,12 +28,8 @@ type LoggerConfig struct {
 
 // Конфигурация базы данных
 type PostgresConfig struct {
-	Host     string `mapstructure:"host"`
-	Port     int    `mapstructure:"port"`
-	User     string `mapstructure:"user"`
-	Password string `mapstructure:"password"`
-	DBName   string `mapstructure:"dbname"`
-	SSLMode  string `mapstructure:"sslmode"`
+	Dsn         string `mapstructure:"dsn"`
+	MigratePath string `mapstructure:"migrate_path"`
 }
 
 // Конфигурация Auth
