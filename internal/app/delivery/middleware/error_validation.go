@@ -29,9 +29,9 @@ func ErrorHandler() gin.HandlerFunc {
 			err := c.Errors.Last().Err
 			var statusCode int
 			var message string
-			var fieldErrors map[string]string // Словарь ошибок валидации
+			var fieldErrors map[string]string
 
-			var validationErrs validator.ValidationErrors // Объявляем переменную перед switch
+			var validationErrs validator.ValidationErrors
 
 			switch {
 			case errors.Is(err, errs.ErrUserAlreadyExists):
@@ -73,6 +73,9 @@ func ErrorHandler() gin.HandlerFunc {
 			case errors.Is(err, errs.ErrFailedToSave):
 				statusCode = http.StatusBadRequest
 				message = "try again later"
+			case errors.Is(err, errs.ErrParseUUID):
+				statusCode = http.StatusBadRequest
+				message = "upss...something went wrong :("
 			case errors.Is(err, errs.ErrFailedToRefresh):
 				statusCode = http.StatusBadRequest
 				message = "try again later"

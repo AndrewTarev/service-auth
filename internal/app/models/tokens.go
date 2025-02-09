@@ -8,11 +8,3 @@ type Tokens struct {
 type InputRefresh struct {
 	RefreshToken string `json:"refresh_token" binding:"required"`
 }
-
-type AccessToken struct {
-	TokenType string `json:"token_type"`
-	Subject   int    `json:"sub"`
-	Username  string `json:"username"`
-	Expires   int64  `json:"exp"`
-	IssuedAt  int64  `json:"iat"`
-}

@@ -44,7 +44,12 @@ definitions:
       refresh_token:
         type: string
     type: object
-  models.User:
+  models.UserIdResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  models.UserInput:
     properties:
       email:
         type: string
@@ -60,11 +65,6 @@ definitions:
     - email
     - password
     - username
-    type: object
-  models.UserIdResponse:
-    properties:
-      id:
-        type: integer
     type: object
 host: localhost:8080
 info:
@@ -100,7 +100,7 @@ paths:
           description: invalid username or password
           schema:
             $ref: '#/definitions/middleware.ValidationErrorResponse'
-      summary: User login
+      summary: UserInput login
       tags:
       - auth
   /auth/refresh:
@@ -139,17 +139,17 @@ paths:
       - application/json
       description: Creates a new user account
       parameters:
-      - description: User details
+      - description: UserInput details
         in: body
         name: input
         required: true
         schema:
-          $ref: '#/definitions/models.User'
+          $ref: '#/definitions/models.UserInput'
       produces:
       - application/json
       responses:
         "201":
-          description: User ID
+          description: UserInput ID
           schema:
             $ref: '#/definitions/models.UserIdResponse'
         "400":

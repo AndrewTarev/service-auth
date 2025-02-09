@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 
@@ -11,7 +12,7 @@ import (
 )
 
 type PostgresRepository interface {
-	CreateUser(ctx context.Context, user models.UserInput) (int, error)
+	CreateUser(ctx context.Context, user models.UserInput) (uuid.UUID, error)
 	GetUser(ctx context.Context, username string) (models.GetUserResponse, error)
 }
 

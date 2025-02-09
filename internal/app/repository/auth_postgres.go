@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 
@@ -24,9 +25,9 @@ func NewPostgresRepo(db *pgxpool.Pool) *PostgresRepo {
 	return &PostgresRepo{db: db}
 }
 
-func (r *PostgresRepo) CreateUser(ctx context.Context, user models.UserInput) (int, error) {
+func (r *PostgresRepo) CreateUser(ctx context.Context, user models.UserInput) (uuid.UUID, error) {
 	query := "INSERT INTO users(username, password_hash, email) VALUES ($1, $2, $3) RETURNING id"
-	var id int
+	var id uuid.UUID
 	err := r.db.QueryRow(ctx, query, user.Username, user.Password, user.Email).Scan(&id)
 	if err != nil {
 		var pgErr *pgconn.PgError
@@ -34,15 +35,15 @@ func (r *PostgresRepo) CreateUser(ctx context.Context, user models.UserInput) (i
 			// Обработка ошибок PostgreSQL
 			if pgErr.Code == DuplicateValue {
 				if pgErr.ConstraintName == "users_username_key" {
-					return 0, errs.ErrUserAlreadyExists
+					return uuid.UUID{}, errs.ErrUserAlreadyExists
 				}
 				if pgErr.ConstraintName == "users_email_key" {
-					return 0, errs.ErrEmailAlreadyUsed
+					return uuid.UUID{}, errs.ErrEmailAlreadyUsed
 				}
 			}
-			return 0, fmt.Errorf("database error: %v", pgErr.Message)
+			return uuid.UUID{}, fmt.Errorf("database error: %v", pgErr.Message)
 		}
-		return 0, fmt.Errorf("query error: %v", err)
+		return uuid.UUID{}, fmt.Errorf("query error: %v", err)
 	}
 	return id, nil
 }

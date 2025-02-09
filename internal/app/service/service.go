@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 
+	"github.com/google/uuid"
+
 	"service-auth/internal/app/models"
 	"service-auth/internal/app/repository"
 	"service-auth/internal/app/utils"
@@ -10,7 +12,7 @@ import (
 )
 
 type AuthService interface {
-	CreateUser(ctx context.Context, user models.UserInput) (int, error)
+	CreateUser(ctx context.Context, user models.UserInput) (uuid.UUID, error)
 	GenerateTokens(ctx context.Context, username, password string) (models.Tokens, error)
 	RefreshTokens(ctx context.Context, oldRefreshToken string) (models.Tokens, error)
 	RevokeToken(ctx context.Context, token string) error

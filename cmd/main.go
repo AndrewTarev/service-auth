@@ -44,7 +44,7 @@ func main() {
 		return
 	}
 
-	// db.ApplyMigrations(cfg.Database.Dsn, cfg.Database.MigratePath)
+	db.ApplyMigrations(cfg.Database.Dsn, cfg.Database.MigratePath)
 
 	// загрузка auth параметров
 	jwtManager := utils.NewJWTManager(cfg)

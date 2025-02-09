@@ -22,4 +22,5 @@ var (
 	ErrValidateInRedis      = errors.New("failed to validate token in Redis")
 	ErrFailedToRefresh      = errors.New("failed to refresh token")
 	ErrFailedToSave         = errors.New("failed to save token")
+	ErrParseUUID            = errors.New("failed to parse uuid")
 )

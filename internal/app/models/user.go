@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 )
 
 var validate *validator.Validate
@@ -13,14 +14,14 @@ func init() {
 }
 
 type UserInput struct {
-	ID       int64  `json:"-"`
-	Username string `json:"username" validate:"required,min=5,max=20"`
-	Password string `json:"password" validate:"required,min=8,max=16"`
-	Email    string `json:"email" validate:"required,email"`
+	ID       uuid.UUID `json:"-"`
+	Username string    `json:"username" validate:"required,min=5,max=20"`
+	Password string    `json:"password" validate:"required,min=8,max=16"`
+	Email    string    `json:"email" validate:"required,email"`
 }
 
 type GetUserResponse struct {
-	ID       int64     `json:"id"`
+	ID       uuid.UUID `json:"id"`
 	Username string    `json:"username"`
 	Password string    `json:"password"`
 	Email    string    `json:"email"`
@@ -34,7 +35,7 @@ func (u *UserInput) Validate() error {
 }
 
 type UserIdResponse struct {
-	UserId int `json:"id"`
+	UserId uuid.UUID `json:"id"`
 }
 
 type SignInInput struct {

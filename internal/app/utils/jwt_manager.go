@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	logger "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 
@@ -42,7 +43,7 @@ func CheckPasswordHash(password, hash string) error {
 }
 
 // GenerateAccessToken создает токен доступа с информацией о пользователе
-func (j *JWTManager) GenerateAccessToken(username, role string, id int, accessTTL time.Duration) (string, error) {
+func (j *JWTManager) GenerateAccessToken(username, role string, id uuid.UUID, accessTTL time.Duration) (string, error) {
 	logger.Debug("Generating access token for user: ", username)
 
 	claims := jwt.MapClaims{
@@ -59,7 +60,7 @@ func (j *JWTManager) GenerateAccessToken(username, role string, id int, accessTT
 }
 
 // GenerateRefreshToken создает токен обновления
-func (j *JWTManager) GenerateRefreshToken(username, role string, id int, refreshTTL time.Duration) (string, error) {
+func (j *JWTManager) GenerateRefreshToken(username, role string, id uuid.UUID, refreshTTL time.Duration) (string, error) {
 	logger.Debug("Generating refresh token")
 
 	claims := jwt.MapClaims{

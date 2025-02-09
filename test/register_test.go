@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
 	"service-auth/internal/app/errs"
@@ -27,14 +28,14 @@ func TestCreateUser(t *testing.T) {
 		Password: "password123",
 		Email:    "testuser@gmail.com",
 	}
-
+	uuidObj, err := uuid.Parse("3410a4f3-a0b0-432a-89ba-9ea9ba48c6c1")
 	// Настройка ожидания для метода CreateUser
-	mockAuthService.EXPECT().CreateUser(gomock.Any(), user).Return(1, nil)
+	mockAuthService.EXPECT().CreateUser(gomock.Any(), user).Return(uuidObj, nil)
 
 	// Test CreateUser
 	id, err := services.CreateUser(context.Background(), user)
 	assert.NoError(t, err)
-	assert.Equal(t, 1, id)
+	assert.Equal(t, uuidObj, id)
 }
 
 // Тест: Ошибка, если пользователь уже существует
@@ -53,7 +54,7 @@ func TestCreateUser_UserAlreadyExists(t *testing.T) {
 	}
 
 	// Симулируем ошибку существующего пользователя
-	mockAuthService.EXPECT().CreateUser(gomock.Any(), user).Return(0, errs.ErrUserAlreadyExists)
+	mockAuthService.EXPECT().CreateUser(gomock.Any(), user).Return(uuid.UUID{}, errs.ErrUserAlreadyExists)
 
 	_, err := svc.CreateUser(context.Background(), user)
 
@@ -77,7 +78,7 @@ func TestCreateUser_EmailAlreadyUsed(t *testing.T) {
 	}
 
 	// Симулируем ошибку email-а
-	mockAuthService.EXPECT().CreateUser(gomock.Any(), user).Return(0, errs.ErrEmailAlreadyUsed)
+	mockAuthService.EXPECT().CreateUser(gomock.Any(), user).Return(uuid.UUID{}, errs.ErrEmailAlreadyUsed)
 
 	_, err := svc.CreateUser(context.Background(), user)
 

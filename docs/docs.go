@@ -27,7 +27,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "User login",
+                "summary": "UserInput login",
                 "parameters": [
                     {
                         "description": "Login credentials",
@@ -122,18 +122,18 @@ const docTemplate = `{
                 "summary": "Register a new user",
                 "parameters": [
                     {
-                        "description": "User details",
+                        "description": "UserInput details",
                         "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.UserInput"
                         }
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "User ID",
+                        "description": "UserInput ID",
                         "schema": {
                             "$ref": "#/definitions/models.UserIdResponse"
                         }
@@ -267,7 +267,15 @@ const docTemplate = `{
                 }
             }
         },
-        "models.User": {
+        "models.UserIdResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserInput": {
             "type": "object",
             "required": [
                 "email",
@@ -287,14 +295,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 20,
                     "minLength": 5
-                }
-            }
-        },
-        "models.UserIdResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
                 }
             }
         }

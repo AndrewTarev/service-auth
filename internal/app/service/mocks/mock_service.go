@@ -10,6 +10,7 @@ import (
 	models "service-auth/internal/app/models"
 
 	gomock "github.com/golang/mock/gomock"
+	uuid "github.com/google/uuid"
 )
 
 // MockAuthService is a mock of AuthService interface.
@@ -36,10 +37,10 @@ func (m *MockAuthService) EXPECT() *MockAuthServiceMockRecorder {
 }
 
 // CreateUser mocks base method.
-func (m *MockAuthService) CreateUser(ctx context.Context, user models.UserInput) (int, error) {
+func (m *MockAuthService) CreateUser(ctx context.Context, user models.UserInput) (uuid.UUID, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUser", ctx, user)
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(uuid.UUID)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

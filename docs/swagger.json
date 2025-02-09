@@ -21,7 +21,7 @@
                 "tags": [
                     "auth"
                 ],
-                "summary": "User login",
+                "summary": "UserInput login",
                 "parameters": [
                     {
                         "description": "Login credentials",
@@ -116,18 +116,18 @@
                 "summary": "Register a new user",
                 "parameters": [
                     {
-                        "description": "User details",
+                        "description": "UserInput details",
                         "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.UserInput"
                         }
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "User ID",
+                        "description": "UserInput ID",
                         "schema": {
                             "$ref": "#/definitions/models.UserIdResponse"
                         }
@@ -261,7 +261,15 @@
                 }
             }
         },
-        "models.User": {
+        "models.UserIdResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserInput": {
             "type": "object",
             "required": [
                 "email",
@@ -281,14 +289,6 @@
                     "type": "string",
                     "maxLength": 20,
                     "minLength": 5
-                }
-            }
-        },
-        "models.UserIdResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
                 }
             }
         }
