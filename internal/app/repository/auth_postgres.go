@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
+	logger "github.com/sirupsen/logrus"
 
 	"service-auth/internal/app/errs"
 	"service-auth/internal/app/models"
@@ -57,6 +58,7 @@ func (r *PostgresRepo) GetUser(ctx context.Context, username string) (models.Get
 		if err.Error() == "no rows in result set" {
 			return user, errs.ErrUserNotFound
 		}
+		logger.Errorf("query GetUser error: %v", err)
 		return user, err
 	}
 	return user, nil

@@ -29,8 +29,9 @@ WORKDIR /app
 COPY --from=builder /app/internal/configs /app/internal/configs
 COPY --from=builder /app/main .
 COPY --from=builder /app/docs /app/docs
-COPY .env .env
+COPY --from=builder /app/internal/certs /app/internal/certs
 COPY --from=builder /app/internal/app/repository/migrations /app/internal/app/repository/migrations
+COPY .env .env
 
 # Экспонируем порт
 EXPOSE 8080
