@@ -34,7 +34,8 @@ type PostgresConfig struct {
 
 // Конфигурация Auth
 type AuthConfig struct {
-	SigningKey      string        `mapstructure:"signing_key"`
+	PrivateKey      string        `mapstructure:"private_key"`
+	PublicKey       string        `mapstructure:"public_key"`
 	AccessTokenTTL  time.Duration `mapstructure:"access_token_ttl"`
 	RefreshTokenTTL time.Duration `mapstructure:"refresh_token_ttl"`
 }

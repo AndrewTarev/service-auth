@@ -20,7 +20,8 @@ redis:
   db: 0
 
 auth:
-  signing_key: "super_secret_key"
+  public_key: internal/certs/jwt-public.pem
+  private_key: internal/certs/jwt-private.pem
   access_token_ttl: 20s  #24h
   refresh_token_ttl: 40s  #720h
 

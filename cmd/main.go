@@ -44,10 +44,14 @@ func main() {
 		return
 	}
 
-	db.ApplyMigrations(cfg.Database.Dsn, cfg.Database.MigratePath)
+	// db.ApplyMigrations(cfg.Database.Dsn, cfg.Database.MigratePath)
 
 	// загрузка auth параметров
-	jwtManager := utils.NewJWTManager(cfg)
+	jwtManager, err := utils.NewJWTManager(cfg.Auth.PrivateKey, cfg.Auth.PublicKey)
+	if err != nil {
+		logger.Fatalf("Error creating JWT manager: %v", err)
+		return
+	}
 	repo := repository.NewRepository(dbConn, redisConn)
 	services := service.NewService(repo, jwtManager, cfg)
 	handlers := http.NewHandler(services, cfg)
