@@ -16,7 +16,6 @@ import (
 )
 
 const (
-	AccessToken  = "access"
 	RefreshToken = "refresh"
 )
 
@@ -111,6 +110,7 @@ func (j *JWTManager) DecodeJWT(tokenString string) (jwt.Claims, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Проверяем, что используется алгоритм RS256
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			logger.Errorf("Unexpected signing method: %v", token.Header["alg"])
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		return j.publicKey, nil // Возвращаем публичный ключ для проверки подписи
